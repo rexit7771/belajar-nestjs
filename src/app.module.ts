@@ -29,7 +29,7 @@ import winston from "winston";
     }),
     UserModule,
     PrismaModule,
-    ValidationModule
+    ValidationModule.forRoot(true),
   ],
   controllers: [AppController],
   providers: [AppService],
