@@ -5,6 +5,7 @@ import type { Response } from 'express';
 import { MailService } from './mail/mail.service';
 import { UserRepository } from './user-repository/user-repository';
 import { MemberService } from './member/member.service';
+import { User } from '@prisma/client';
 
 type resType = { message: string }
 
@@ -26,9 +27,16 @@ export class UserController {
         return this.service.sayHello(name);
     }
 
+    @Post("/")
+    async create(
+        @Body("firstName") firstName: string,
+        @Body("lastName") lastName: string
+    ): Promise<User> {
+        return this.userRepository.save(firstName, lastName)
+    }
+
     @Get("/connection")
     async getConnection(): Promise<String> {
-        this.userRepository.save();
         this.emailService.send();
         this.mailService.send();
 
