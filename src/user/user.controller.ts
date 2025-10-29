@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Header, HttpCode, Inject, Param, Post, Query, Res } from '@nestjs/common';
+import { Body, Controller, Get, Header, HttpCode, HttpException, Inject, Param, Post, Query, Res, UseFilters } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Connection } from './connection/connection';
 import type { Response } from 'express';
@@ -6,6 +6,7 @@ import { MailService } from './mail/mail.service';
 import { UserRepository } from './user-repository/user-repository';
 import { MemberService } from './member/member.service';
 import { User } from '@prisma/client';
+import { ValidationFilter } from 'src/validation/validation.filter';
 
 type resType = { message: string }
 
@@ -23,6 +24,7 @@ export class UserController {
     ) { }
 
     @Get("/sayNameService")
+    // @UseFilters(ValidationFilter)
     async sayNameByService(@Query("name") name: string) {
         return this.service.sayHello(name);
     }
@@ -32,6 +34,15 @@ export class UserController {
         @Body("firstName") firstName: string,
         @Body("lastName") lastName: string
     ): Promise<User> {
+        if (!firstName) {
+            throw new HttpException(
+                {
+                    code: 400,
+                    errors: "First name is required"
+                },
+                400
+            );
+        }
         return this.userRepository.save(firstName, lastName)
     }
 

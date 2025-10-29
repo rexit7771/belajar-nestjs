@@ -38,7 +38,7 @@ import { LogMiddleware } from './log/log.middleware';
 export default class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(LogMiddleware).forRoutes({
-      path: "/user/*",
+      path: "/user/*path",
       method: RequestMethod.ALL
     });
   }
