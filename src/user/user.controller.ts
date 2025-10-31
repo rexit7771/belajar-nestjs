@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Header, HttpCode, HttpException, Inject, Param, Post, Query, Res, UseFilters } from '@nestjs/common';
+import { Body, Controller, Get, Header, HttpCode, HttpException, Inject, Param, ParseIntPipe, Post, Query, Res, UseFilters } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Connection } from './connection/connection';
 import type { Response } from 'express';
@@ -7,6 +7,8 @@ import { UserRepository } from './user-repository/user-repository';
 import { MemberService } from './member/member.service';
 import { User } from '@prisma/client';
 import { ValidationFilter } from 'src/validation/validation.filter';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
 
 type resType = { message: string }
 
@@ -18,6 +20,7 @@ export class UserController {
         private mailService: MailService,
         private userRepository: UserRepository,
         @Inject("EmailService") private emailService: MailService,
+        @Inject(WINSTON_MODULE_PROVIDER) private logger: Logger,
 
         // * Ini moduleRef
         private memberService: MemberService
@@ -96,5 +99,10 @@ export class UserController {
     @Get("/render")
     renderView(@Query("name") name: string, @Res() res: Response) {
         res.render("index.html", { title: "Template Engine", name })
+    }
+
+    @Get("/:id")
+    getById(@Param("id", ParseIntPipe) id: number): string {
+        return `GET ${id}, type ${typeof id}`
     }
 }
