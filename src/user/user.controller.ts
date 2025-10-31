@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Header, HttpCode, HttpException, Inject, Param, ParseIntPipe, Post, Query, Res, UseFilters, UsePipes } from '@nestjs/common';
+import { Body, Controller, Get, Header, HttpCode, HttpException, Inject, Param, ParseIntPipe, Post, Query, Res, UseFilters, UseInterceptors, UsePipes } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Connection } from './connection/connection';
 import type { Response } from 'express';
@@ -11,6 +11,7 @@ import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 import { LoginUserRequest, loginUserRequestValidation } from 'src/model/login.model';
 import { ValidationPipe } from 'src/validation/validation.pipe';
+import { TimeInterceptor } from 'src/time/time.interceptor';
 
 type resType = { message: string }
 
@@ -41,6 +42,7 @@ export class UserController {
     @UsePipes(new ValidationPipe(loginUserRequestValidation))
     // * Filter Pipe
     @UseFilters(ValidationFilter)
+    @UseInterceptors(TimeInterceptor)
     login(
         @Query("id") id: number,
         @Body(
@@ -48,7 +50,9 @@ export class UserController {
             // new ValidationPipe(loginUserRequestValidation)
         ) req: LoginUserRequest
     ) {
-        return `Hello ${req.username}`;
+        return {
+            message: `Hello ${req.username}`
+        }
     }
 
     @Post("/")
