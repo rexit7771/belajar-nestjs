@@ -6,6 +6,11 @@ export class ValidationPipe implements PipeTransform {
   constructor(private zodType: ZodType) { }
 
   transform(value: any, metadata: ArgumentMetadata) {
-    return this.zodType.parse(value);
+    // * Membedakan filternya
+    if (metadata.type === "body") {
+      return this.zodType.parse(value);
+    } else {
+      return value;
+    }
   }
 }

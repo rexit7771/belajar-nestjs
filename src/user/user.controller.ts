@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Header, HttpCode, HttpException, Inject, Param, ParseIntPipe, Post, Query, Res, UseFilters } from '@nestjs/common';
+import { Body, Controller, Get, Header, HttpCode, HttpException, Inject, Param, ParseIntPipe, Post, Query, Res, UseFilters, UsePipes } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Connection } from './connection/connection';
 import type { Response } from 'express';
@@ -34,10 +34,15 @@ export class UserController {
         return this.service.sayHello(name);
     }
 
-    @UseFilters(ValidationFilter)
+
     @Post("/login")
+    // * Global Pipe
+    @UsePipes(new ValidationPipe(loginUserRequestValidation))
+    // * Filter Pipe
+    @UseFilters(ValidationFilter)
     login(
-        @Body(new ValidationPipe(loginUserRequestValidation)) req: LoginUserRequest
+        @Query("id") id: number,
+        @Body() req: LoginUserRequest
     ) {
         return `Hello ${req.username}`;
     }
