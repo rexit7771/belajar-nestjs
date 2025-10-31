@@ -37,12 +37,16 @@ export class UserController {
 
     @Post("/login")
     // * Global Pipe
+    // Global pipe berarti berlaku untuk semua parameter, setting per parameternya harus di custom validationnya
     @UsePipes(new ValidationPipe(loginUserRequestValidation))
     // * Filter Pipe
     @UseFilters(ValidationFilter)
     login(
         @Query("id") id: number,
-        @Body() req: LoginUserRequest
+        @Body(
+            // * Pakai filter seperti ini jika pipe nya dipakai per parameter
+            // new ValidationPipe(loginUserRequestValidation)
+        ) req: LoginUserRequest
     ) {
         return `Hello ${req.username}`;
     }
