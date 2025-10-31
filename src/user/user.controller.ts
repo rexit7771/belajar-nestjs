@@ -9,6 +9,8 @@ import { User } from '@prisma/client';
 import { ValidationFilter } from 'src/validation/validation.filter';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
+import { LoginUserRequest, loginUserRequestValidation } from 'src/model/login.model';
+import { ValidationPipe } from 'src/validation/validation.pipe';
 
 type resType = { message: string }
 
@@ -30,6 +32,14 @@ export class UserController {
     // @UseFilters(ValidationFilter)
     async sayNameByService(@Query("name") name: string) {
         return this.service.sayHello(name);
+    }
+
+    @UseFilters(ValidationFilter)
+    @Post("/login")
+    login(
+        @Body(new ValidationPipe(loginUserRequestValidation)) req: LoginUserRequest
+    ) {
+        return `Hello ${req.username}`;
     }
 
     @Post("/")
