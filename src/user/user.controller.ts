@@ -33,7 +33,7 @@ export class UserController {
     ) { }
 
     @Get("/current")
-    @UseGuards(RoleGuard)
+    // @UseGuards(RoleGuard)
     @Roles(["admin", "operator"])
     current(@Auth() user: User): Record<string, any> {
         return {
