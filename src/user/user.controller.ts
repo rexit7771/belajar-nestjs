@@ -5,13 +5,14 @@ import type { Response } from 'express';
 import { MailService } from './mail/mail.service';
 import { UserRepository } from './user-repository/user-repository';
 import { MemberService } from './member/member.service';
-import { User } from '@prisma/client';
+import type { User } from '@prisma/client';
 import { ValidationFilter } from 'src/validation/validation.filter';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 import { LoginUserRequest, loginUserRequestValidation } from 'src/model/login.model';
 import { ValidationPipe } from 'src/validation/validation.pipe';
 import { TimeInterceptor } from 'src/time/time.interceptor';
+import { Auth } from 'src/auth/auth.decorator';
 
 type resType = { message: string }
 
@@ -28,6 +29,13 @@ export class UserController {
         // * Ini moduleRef
         private memberService: MemberService
     ) { }
+
+    @Get("/current")
+    current(@Auth() user: User): Record<string, any> {
+        return {
+            data: `Hello ${user.first_name} ${user.last_name ? user.last_name : ""}`
+        };
+    }
 
     @Get("/sayNameService")
     // @UseFilters(ValidationFilter)

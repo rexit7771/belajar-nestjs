@@ -8,6 +8,7 @@ import { WinstonModule } from 'nest-winston';
 import { ValidationModule } from './validation/validation.module';
 import winston from "winston";
 import { LogMiddleware } from './log/log.middleware';
+import { AuthMiddleware } from './auth/auth.middleware';
 
 @Module({
   imports: [
@@ -40,6 +41,10 @@ export default class AppModule implements NestModule {
     consumer.apply(LogMiddleware).forRoutes({
       path: "/user/*path",
       method: RequestMethod.ALL
+    });
+    consumer.apply(AuthMiddleware).forRoutes({
+      path: "/user/current",
+      method: RequestMethod.GET
     });
   }
 }
