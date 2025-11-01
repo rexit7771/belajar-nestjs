@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Header, HttpCode, HttpException, Inject, Param, ParseIntPipe, Post, Query, Res, UseFilters, UseInterceptors, UsePipes } from '@nestjs/common';
+import { Body, Controller, Get, Header, HttpCode, HttpException, Inject, Param, ParseIntPipe, Post, Query, Res, UseFilters, UseGuards, UseInterceptors, UsePipes } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Connection } from './connection/connection';
 import type { Response } from 'express';
@@ -13,6 +13,7 @@ import { LoginUserRequest, loginUserRequestValidation } from 'src/model/login.mo
 import { ValidationPipe } from 'src/validation/validation.pipe';
 import { TimeInterceptor } from 'src/time/time.interceptor';
 import { Auth } from 'src/auth/auth.decorator';
+import { RoleGuard } from 'src/role/role.guard';
 
 type resType = { message: string }
 
@@ -31,6 +32,7 @@ export class UserController {
     ) { }
 
     @Get("/current")
+    @UseGuards(new RoleGuard(["admin", "operator"]))
     current(@Auth() user: User): Record<string, any> {
         return {
             data: `Hello ${user.first_name} ${user.last_name ? user.last_name : ""}`
